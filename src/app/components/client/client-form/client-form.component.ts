@@ -1,7 +1,7 @@
-import { Component, inject, Optional } from '@angular/core';
+import { Component, inject, Optional, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatDialogRef, MatDialogModule } from '@angular/material/dialog';
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
@@ -22,7 +22,7 @@ import { Router } from '@angular/router';
     MatCheckboxModule
   ],
   template: `
-    <h2>Adicionar Cliente</h2>
+    <h2>{{ data ? 'Editar Cliente' : 'Adicionar Cliente' }}</h2>
     <form [formGroup]="clientForm" (ngSubmit)="onSubmit()">
       <mat-form-field>
         <input matInput placeholder="Nome" formControlName="name" required>
@@ -39,13 +39,13 @@ import { Router } from '@angular/router';
       </mat-form-field>
 
       <mat-form-field>
-        <input matInput placeholder="Telefone" formControlName="phone">
-        <mat-error *ngIf="clientForm.get('phone')?.invalid && clientForm.get('phone')?.touched">
+        <input matInput placeholder="Telefone" formControlName="phoneNumber">
+        <mat-error *ngIf="clientForm.get('phoneNumber')?.invalid && clientForm.get('phoneNumber')?.touched">
           O telefone deve estar no formato (XX) XXXXX-XXXX.
         </mat-error>
       </mat-form-field>
 
-      <mat-checkbox formControlName="isActive">Ativo</mat-checkbox>
+      <mat-checkbox formControlName="active">Ativo</mat-checkbox>
 
       <button mat-button type="submit" [disabled]="clientForm.invalid">Salvar</button>
     </form>
@@ -57,22 +57,29 @@ export class ClientFormComponent {
   private router = inject(Router);
   private dialogRef = inject(MatDialogRef<ClientFormComponent>, { optional: true });
 
+  constructor(@Optional() @Inject(MAT_DIALOG_DATA) public data: any) {
+    this.clientForm.patchValue(data || {});
+  }
+
   clientForm: FormGroup = this.fb.group({
     name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
     email: ['', [Validators.required, Validators.email]],
-    phone: ['', [Validators.pattern(/^\(\d{2}\) \d{5}-\d{4}$/)]],
-    isActive: [false]
+    phoneNumber: ['', [Validators.pattern(/^\(\d{2}\) \d{5}-\d{4}$/)]],
+    active: [false]
   });
 
   onSubmit() {
     if (this.clientForm.valid) {
-      this.clientService.createClient(this.clientForm.value).subscribe(() => {
-        if (this.dialogRef) {
-          this.dialogRef.close(true);
-        } else {
-          this.router.navigate(['/clients']);
-        }
-      });
+      if (this.data) {
+        this.clientService.updateClient(this.data.id, this.clientForm.value).subscribe(() => {
+          this.dialogRef?.close(true);
+        });
+      } else {
+        this.clientService.createClient(this.clientForm.value).subscribe(() => {
+          this.dialogRef?.close(true);
+          this.router.navigate(['/clientes']);
+        });
+      }
     }
   }
 }
