@@ -1,7 +1,7 @@
-import { Component, inject, Optional } from '@angular/core';
+import { Component, inject, Optional, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatDialogRef, MatDialogModule } from '@angular/material/dialog';
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
@@ -20,7 +20,7 @@ import { Router } from '@angular/router';
     MatButtonModule
   ],
   template: `
-    <h2>Adicionar Produto</h2>
+    <h2>{{ data ? 'Editar Produto' : 'Adicionar Produto' }}</h2>
     <form [formGroup]="productForm" (ngSubmit)="onSubmit()">
       <mat-form-field>
         <input matInput placeholder="Nome" formControlName="name" required>
@@ -53,6 +53,10 @@ export class ProductFormComponent {
   private router = inject(Router);
   private dialogRef = inject(MatDialogRef<ProductFormComponent>, { optional: true });
 
+  constructor(@Optional() @Inject(MAT_DIALOG_DATA) public data: any) {
+    this.productForm.patchValue(data || {});
+  }
+
   productForm: FormGroup = this.fb.group({
     name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
     price: [null, [Validators.required, Validators.min(0.01)]],
@@ -61,13 +65,16 @@ export class ProductFormComponent {
 
   onSubmit() {
     if (this.productForm.valid) {
-      this.productService.createProduct(this.productForm.value).subscribe(() => {
-        if (this.dialogRef) {
-          this.dialogRef.close(true);
-        } else {
-          this.router.navigate(['/products']);
-        }
-      });
+      if (this.data) {
+        this.productService.updateProduct(this.data.id, this.productForm.value).subscribe(() => {
+          this.dialogRef?.close(true);
+        });
+      } else {
+        this.productService.createProduct(this.productForm.value).subscribe(() => {
+          this.dialogRef?.close(true);
+          this.router.navigate(['/produtos']);
+        });
+      }
     }
   }
 }
