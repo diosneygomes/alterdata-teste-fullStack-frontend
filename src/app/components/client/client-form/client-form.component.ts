@@ -32,7 +32,6 @@ export class ClientFormComponent {
   private dialogRef = inject(MatDialogRef<ClientFormComponent>, { optional: true });
 
   constructor(@Optional() @Inject(MAT_DIALOG_DATA) public client: Client) {
-    this.clientForm.patchValue(client || {});
   }
 
   clientForm: FormGroup = this.fb.group({
@@ -41,6 +40,17 @@ export class ClientFormComponent {
     phoneNumber: ['', [Validators.pattern(/^\(\d{2}\) \d{5}-\d{4}$/)]],
     active: [false]
   });
+
+  ngOnInit() {
+    if (this.client) {
+      this.clientForm.setValue({
+        name: this.client.name,
+        email: this.client.email,
+        phoneNumber: this.client.phoneNumber || '',
+        active: this.client.active ?? true
+      });
+    }
+  };
 
   onSubmit() {
     if (this.clientForm.valid) {

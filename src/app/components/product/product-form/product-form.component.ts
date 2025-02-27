@@ -22,21 +22,30 @@ import { Product } from '../../../models/Product';
   ],
   templateUrl: './product-form.component.html'
 })
+
 export class ProductFormComponent {
   private productService = inject(ProductService);
   private fb = inject(FormBuilder);
   private router = inject(Router);
   private dialogRef = inject(MatDialogRef<ProductFormComponent>, { optional: true });
 
-  constructor(@Optional() @Inject(MAT_DIALOG_DATA) public product: Product) {
-    this.productForm.patchValue(product || {});
-  }
+  constructor(@Optional() @Inject(MAT_DIALOG_DATA) public product: Product) {}
 
   productForm: FormGroup = this.fb.group({
     name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
     price: [null, [Validators.required, Validators.min(0.01)]],
     stock: [null, [Validators.required, Validators.min(0)]]
   });
+
+  ngOnInit() {
+    if (this.product) {
+      this.productForm.setValue({
+        name: this.product.name,
+        price: this.product.price,
+        stock: this.product.stock
+      });
+    }
+  };
 
   onSubmit() {
     if (this.productForm.valid) {
