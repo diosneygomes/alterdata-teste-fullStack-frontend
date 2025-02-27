@@ -6,9 +6,9 @@ import { ClientFormComponent } from '../app/components/client/client-form/client
 import { ProductFormComponent } from '../app/components/product/product-form/product-form.component';
 
 export const routes: Routes = [
-  { path: 'clients', component: ClientListComponent },
-  { path: 'products', component: ProductListComponent },
-  { path: 'clients/add', component: ClientFormComponent },
-  { path: 'products/add', component: ProductFormComponent },
-  { path: '', redirectTo: 'clients', pathMatch: 'full' },
+  { path: 'clientes', component: ClientListComponent },
+  { path: 'produtos', component: ProductListComponent },
+  { path: 'clientes/novo', component: ClientFormComponent },
+  { path: 'produtos/novo', component: ProductFormComponent },
+  { path: '', redirectTo: 'clientes', pathMatch: 'full' },
 ];

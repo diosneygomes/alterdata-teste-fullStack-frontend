@@ -10,8 +10,8 @@ import { MatButtonModule } from '@angular/material/button';
   imports: [CommonModule, RouterModule, MatToolbarModule, MatButtonModule],
   template: `
     <mat-toolbar color="primary">
-      <button mat-button routerLink="/clients">Clientes</button>
-      <button mat-button routerLink="/products">Produtos</button>
+      <button mat-button routerLink="/clientes">Clientes</button>
+      <button mat-button routerLink="/produtos">Produtos</button>
     </mat-toolbar>
     <router-outlet></router-outlet>
   `,
