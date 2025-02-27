@@ -19,15 +19,7 @@ import { ProductFormComponent } from '../app/components/product/product-form/pro
     MatMenuModule,
     MatDialogModule
   ],
-  template: `
-    <mat-toolbar color="primary">
-      <button mat-button routerLink="/clientes">Listar Clientes</button>
-      <button mat-button routerLink="/clientes/novo">Cadastrar Novo Cliente</button>
-      <button mat-button routerLink="/produtos">Listar Produtos</button>
-      <button mat-button routerLink="/produtos/novo">Cadastrar Novo Produto</button>
-    </mat-toolbar>
-    <router-outlet></router-outlet>
-  `,
+  templateUrl: './app.component.html',
 })
 export class AppComponent {
   private dialog = inject(MatDialog);

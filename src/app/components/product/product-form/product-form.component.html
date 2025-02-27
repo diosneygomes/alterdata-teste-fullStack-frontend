@@ -1,1 +1,25 @@
-<p>product-form works!</p>
+<h2>{{ product ? 'Editar Produto' : 'Adicionar Produto' }}</h2>
+<form [formGroup]="productForm" (ngSubmit)="onSubmit()">
+  <mat-form-field>
+    <input matInput placeholder="Nome" formControlName="name" required>
+    <mat-error *ngIf="productForm.get('name')?.invalid && productForm.get('name')?.touched">
+      Nome deve ter entre 3 e 100 caracteres.
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field>
+    <input matInput type="number" placeholder="Preço" formControlName="price" required>
+    <mat-error *ngIf="productForm.get('price')?.invalid && productForm.get('price')?.touched">
+      O preço deve ser maior que 0.
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field>
+    <input matInput type="number" placeholder="Estoque" formControlName="stock" required>
+    <mat-error *ngIf="productForm.get('stock')?.invalid && productForm.get('stock')?.touched">
+      O estoque deve ser maior ou igual a 0.
+    </mat-error>
+  </mat-form-field>
+
+  <button mat-button type="submit" [disabled]="productForm.invalid">Salvar</button>
+</form>

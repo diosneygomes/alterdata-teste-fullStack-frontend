@@ -4,8 +4,9 @@ import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { ClientService } from '../../../../services/client.service';
+import { ClientService } from '../../../services/client.service';
 import { ClientFormComponent } from '../client-form/client-form.component';
+import { Client } from '../../../models/Client';
 
 @Component({
   selector: 'app-clients',
@@ -17,55 +18,12 @@ import { ClientFormComponent } from '../client-form/client-form.component';
     MatIconModule,
     MatDialogModule
   ],
-  template: `
-    <h2>Lista de Clientes</h2>
-    <table mat-table [dataSource]="clients" class="mat-elevation-z8">
-      <ng-container matColumnDef="id">
-        <th mat-header-cell *matHeaderCellDef> ID </th>
-        <td mat-cell *matCellDef="let client"> {{client.id}} </td>
-      </ng-container>
-
-      <ng-container matColumnDef="name">
-        <th mat-header-cell *matHeaderCellDef> Nome </th>
-        <td mat-cell *matCellDef="let client"> {{client.name}} </td>
-      </ng-container>
-
-      <ng-container matColumnDef="email">
-        <th mat-header-cell *matHeaderCellDef> Email </th>
-        <td mat-cell *matCellDef="let client"> {{client.email}} </td>
-      </ng-container>
-
-      <ng-container matColumnDef="phoneNumber">
-        <th mat-header-cell *matHeaderCellDef> Telefone </th>
-        <td mat-cell *matCellDef="let client"> {{client.phoneNumber}} </td>
-      </ng-container>
-
-      <ng-container matColumnDef="active">
-        <th mat-header-cell *matHeaderCellDef> Ativo </th>
-        <td mat-cell *matCellDef="let client"> {{client.active ? 'Sim' : 'Não'}} </td>
-      </ng-container>
-
-      <ng-container matColumnDef="actions">
-        <th mat-header-cell *matHeaderCellDef> Ações </th>
-        <td mat-cell *matCellDef="let client">
-          <button mat-icon-button color="primary" (click)="editClient(client)">
-            <mat-icon>edit</mat-icon>
-          </button>
-          <button mat-icon-button color="warn" (click)="deleteClient(client.id)">
-            <mat-icon>delete</mat-icon>
-          </button>
-        </td>
-      </ng-container>
-
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-    </table>
-  `
+  templateUrl: '../client-list/client-list.component.html'
 })
 export class ClientListComponent {
   private clientService = inject(ClientService);
   private dialog = inject(MatDialog);
-  clients: any[] = [];
+  clients: Client[] = [];
   displayedColumns: string[] = ['id', 'name', 'email', 'phoneNumber', 'active', 'actions'];
 
   constructor() {
@@ -80,7 +38,7 @@ export class ClientListComponent {
     this.loadClients();
   }
 
-  editClient(client: any) {
+  editClient(client: Client) {
     const dialogRef = this.dialog.open(ClientFormComponent, {
       width: '600px',
       data: client

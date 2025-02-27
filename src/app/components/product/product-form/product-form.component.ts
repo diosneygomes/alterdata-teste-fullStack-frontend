@@ -5,8 +5,9 @@ import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/materia
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
-import { ProductService } from '../../../../services/product.service';
+import { ProductService } from '../../../services/product.service';
 import { Router } from '@angular/router';
+import { Product } from '../../../models/Product';
 
 @Component({
   selector: 'app-product-form',
@@ -19,33 +20,7 @@ import { Router } from '@angular/router';
     MatInputModule,
     MatButtonModule
   ],
-  template: `
-    <h2>{{ data ? 'Editar Produto' : 'Adicionar Produto' }}</h2>
-    <form [formGroup]="productForm" (ngSubmit)="onSubmit()">
-      <mat-form-field>
-        <input matInput placeholder="Nome" formControlName="name" required>
-        <mat-error *ngIf="productForm.get('name')?.invalid && productForm.get('name')?.touched">
-          Nome deve ter entre 3 e 100 caracteres.
-        </mat-error>
-      </mat-form-field>
-
-      <mat-form-field>
-        <input matInput type="number" placeholder="Preço" formControlName="price" required>
-        <mat-error *ngIf="productForm.get('price')?.invalid && productForm.get('price')?.touched">
-          O preço deve ser maior que 0.
-        </mat-error>
-      </mat-form-field>
-
-      <mat-form-field>
-        <input matInput type="number" placeholder="Estoque" formControlName="stock" required>
-        <mat-error *ngIf="productForm.get('stock')?.invalid && productForm.get('stock')?.touched">
-          O estoque deve ser maior ou igual a 0.
-        </mat-error>
-      </mat-form-field>
-
-      <button mat-button type="submit" [disabled]="productForm.invalid">Salvar</button>
-    </form>
-  `
+  templateUrl: './product-form.component.html'
 })
 export class ProductFormComponent {
   private productService = inject(ProductService);
@@ -53,8 +28,8 @@ export class ProductFormComponent {
   private router = inject(Router);
   private dialogRef = inject(MatDialogRef<ProductFormComponent>, { optional: true });
 
-  constructor(@Optional() @Inject(MAT_DIALOG_DATA) public data: any) {
-    this.productForm.patchValue(data || {});
+  constructor(@Optional() @Inject(MAT_DIALOG_DATA) public product: Product) {
+    this.productForm.patchValue(product || {});
   }
 
   productForm: FormGroup = this.fb.group({
@@ -65,8 +40,8 @@ export class ProductFormComponent {
 
   onSubmit() {
     if (this.productForm.valid) {
-      if (this.data) {
-        this.productService.updateProduct(this.data.id, this.productForm.value).subscribe(() => {
+      if (this.product && this.product.id) {
+        this.productService.updateProduct(this.product.id, this.productForm.value).subscribe(() => {
           this.dialogRef?.close(true);
         });
       } else {

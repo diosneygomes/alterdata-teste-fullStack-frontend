@@ -6,8 +6,10 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { ClientService } from '../../../../services/client.service';
+import { ClientService } from '../../../services/client.service';
 import { Router } from '@angular/router';
+import { Client } from '../../../models/Client';
+
 
 @Component({
   selector: 'app-client-form',
@@ -21,35 +23,7 @@ import { Router } from '@angular/router';
     MatButtonModule,
     MatCheckboxModule
   ],
-  template: `
-    <h2>{{ data ? 'Editar Cliente' : 'Adicionar Cliente' }}</h2>
-    <form [formGroup]="clientForm" (ngSubmit)="onSubmit()">
-      <mat-form-field>
-        <input matInput placeholder="Nome" formControlName="name" required>
-        <mat-error *ngIf="clientForm.get('name')?.invalid && clientForm.get('name')?.touched">
-          Nome deve ter entre 3 e 100 caracteres.
-        </mat-error>
-      </mat-form-field>
-
-      <mat-form-field>
-        <input matInput type="email" placeholder="Email" formControlName="email" required>
-        <mat-error *ngIf="clientForm.get('email')?.invalid && clientForm.get('email')?.touched">
-          Insira um e-mail válido.
-        </mat-error>
-      </mat-form-field>
-
-      <mat-form-field>
-        <input matInput placeholder="Telefone" formControlName="phoneNumber">
-        <mat-error *ngIf="clientForm.get('phoneNumber')?.invalid && clientForm.get('phoneNumber')?.touched">
-          O telefone deve estar no formato (XX) XXXXX-XXXX.
-        </mat-error>
-      </mat-form-field>
-
-      <mat-checkbox formControlName="active">Ativo</mat-checkbox>
-
-      <button mat-button type="submit" [disabled]="clientForm.invalid">Salvar</button>
-    </form>
-  `
+  templateUrl: `../client-form/client-form.component.html`
 })
 export class ClientFormComponent {
   private clientService = inject(ClientService);
@@ -57,8 +31,8 @@ export class ClientFormComponent {
   private router = inject(Router);
   private dialogRef = inject(MatDialogRef<ClientFormComponent>, { optional: true });
 
-  constructor(@Optional() @Inject(MAT_DIALOG_DATA) public data: any) {
-    this.clientForm.patchValue(data || {});
+  constructor(@Optional() @Inject(MAT_DIALOG_DATA) public client: Client) {
+    this.clientForm.patchValue(client || {});
   }
 
   clientForm: FormGroup = this.fb.group({
@@ -70,8 +44,8 @@ export class ClientFormComponent {
 
   onSubmit() {
     if (this.clientForm.valid) {
-      if (this.data) {
-        this.clientService.updateClient(this.data.id, this.clientForm.value).subscribe(() => {
+      if (this.client && this.client.id) {
+        this.clientService.updateClient(this.client.id, this.clientForm.value).subscribe(() => {
           this.dialogRef?.close(true);
         });
       } else {

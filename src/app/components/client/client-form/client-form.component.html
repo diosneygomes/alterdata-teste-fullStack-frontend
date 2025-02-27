@@ -1,1 +1,27 @@
-<p>client-form works!</p>
+<h2>{{ client ? 'Editar Cliente' : 'Adicionar Cliente' }}</h2>
+<form [formGroup]="clientForm" (ngSubmit)="onSubmit()">
+  <mat-form-field>
+    <input matInput placeholder="Nome" formControlName="name" required>
+    <mat-error *ngIf="clientForm.get('name')?.invalid && clientForm.get('name')?.touched">
+      Nome deve ter entre 3 e 100 caracteres.
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field>
+    <input matInput type="email" placeholder="Email" formControlName="email" required>
+    <mat-error *ngIf="clientForm.get('email')?.invalid && clientForm.get('email')?.touched">
+      Insira um e-mail válido.
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field>
+    <input matInput placeholder="Telefone" formControlName="phoneNumber">
+    <mat-error *ngIf="clientForm.get('phoneNumber')?.invalid && clientForm.get('phoneNumber')?.touched">
+      O telefone deve estar no formato (XX) XXXXX-XXXX.
+    </mat-error>
+  </mat-form-field>
+
+  <mat-checkbox formControlName="active">Ativo</mat-checkbox>
+
+  <button mat-button type="submit" [disabled]="clientForm.invalid">Salvar</button>
+</form>
